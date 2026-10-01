@@ -6,7 +6,7 @@ pipeline {
         docker { image 'maven:3-eclipse-temurin-21' }
       }
       steps {
-        git branch: 'main', url: 'https://github.com/dlawnsgh508-stack/source-maven-java-spring-hello-webapp.git'
+        git branch: 'main', url: 'https://github.com/dlawnsgh508-stack/test-cicd.git'
       }
     }
     stage('Test Application') {
