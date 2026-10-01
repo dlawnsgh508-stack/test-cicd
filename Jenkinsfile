@@ -34,16 +34,16 @@ pipeline {
     stage('Tag Container Image') {
       agent { label 'controller' }
       steps {
-        sh 'docker image tag my-tomcat dlawnsgh508/my-tomcat:v1' // Tagging with build number
-        sh 'docker image tag my-tomcat dlawnsgh508/my-tomcat:latest' // Tagging with latest
+        sh 'docker image tag my-tomcat limjunho/my-tomcat:v1' // Tagging with build number
+        sh 'docker image tag my-tomcat limjunho/my-tomcat:latest' // Tagging with latest
       }
     }
     stage('Push Container Image') {
       agent { label 'controller' }
       steps {
         withDockerRegistry(credentialsId: 'docker-registry-credential', url: 'https://index.docker.io/v1/') {
-          sh 'docker image push dlawnsgh508/my-tomcat:v1' // Tagging with build number
-          sh 'docker image push dlawnsgh508/my-tomcat:latest' // Tagging with latest
+          sh 'docker image push limjunho/my-tomcat:v1' // Tagging with build number
+          sh 'docker image push limjunho/my-tomcat:latest' // Tagging with latest
         }
       }
     }
