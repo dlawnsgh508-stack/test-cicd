@@ -1,0 +1,63 @@
+pipeline {
+  agent {
+	kubernetes {
+	  yaml '''
+	   apiVersion: v1
+	   kind: Pod
+           spec:
+		containers:
+		- name: maven
+		  image: maven:3-eclipse-temurin-21
+		  command:
+		  - sleep
+		  args:
+		  - infinity
+	  '''
+	}
+  }
+  stages {
+    stage('Checkout') {
+	steps {
+	  container('maven') {
+	  git branch: https://github.com/dlawnsgh508-stack/source-maven-java-spring-hello-webapp.git
+		}
+	}
+    }
+  stage('Test Application') {
+      steps {
+        container('maven') {
+          sh 'mvn test'
+        }
+      }
+    }
+    stage('Build Application') {
+      steps {
+        container('maven') {
+          sh 'mvn clean package -DskipTests=true'
+        }
+      }
+    }
+    stage('Build Container Image') {
+      steps {
+        container('buildah') {
+          sh """
+            buildah build -f ${DOCKERFILE} \
+              -t IMAGETAG:{BUILD_NUMBER} \
+              -t ${IMAGE_TAG}:latest .
+          """
+        }
+      }
+    }
+    stage('Push Container Image') {
+      steps {
+        container('buildah') {
+          sh """
+            buildah push IMAGETAG:{BUILD_NUMBER}
+            buildah push ${IMAGE_TAG}:latest
+          """
+        }
+      }
+    }
+  }
+}
+
